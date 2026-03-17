@@ -1,27 +1,22 @@
 // ── PAGE: CAMP ──────────────────────────────────────────────
+let _campFilters     = [];
+let _campDropdownOpen = false;
+
 function renderCamp(hFilter) {
-  if (hFilter) {
-    _campFilters = hFilter.split(",").filter(Boolean);
-  } else {
-    _campFilters = [];
-  }
+  _campFilters     = hFilter ? hFilter.split(",").filter(Boolean) : [];
   _campDropdownOpen = false;
   return renderCampHTML();
 }
 
 function renderCampHTML() {
-  const teams = getTeams();
-  const filtered =
-    _campFilters.length === 0
-      ? teams
-      : teams.filter((t) => _campFilters.includes(t.hackathonSlug));
+  const teams    = getTeams();
+  const filtered = _campFilters.length === 0
+    ? teams
+    : teams.filter((t) => _campFilters.includes(t.hackathonSlug));
   return `
 <div class="wrap page" onclick="closeCampDropdown(event)">
   <div class="ph-row">
-    <div class="ph">
-      <h1>👥 팀원 모집</h1>
-      <p>해커톤 팀을 찾거나 새 팀을 만드세요.</p>
-    </div>
+    <div class="ph"><h1>👥 팀원 모집</h1><p>해커톤 팀을 찾거나 새 팀을 만드세요.</p></div>
     <button class="btn btn-p" onclick="openTeamModal()">+ 팀 만들기</button>
   </div>
 
@@ -34,19 +29,17 @@ function renderCampHTML() {
       </button>
       ${_campFilters.map((slug) => {
         const h = HACKATHONS.find((x) => x.slug === slug);
-        return h
-          ? `<span style="display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .65rem;background:var(--pd);color:var(--pl);border:1px solid var(--primary);border-radius:100px;font-size:.78rem">
-              ${h.title.length > 18 ? h.title.slice(0, 18) + "…" : h.title}
-              <span onclick="toggleCampFilterSlug('${slug}')" style="cursor:pointer;opacity:.7;font-size:.8rem;line-height:1">✕</span>
-            </span>`
-          : "";
+        return h ? `<span style="display:inline-flex;align-items:center;gap:.35rem;padding:.25rem .65rem;background:var(--pd);color:var(--pl);border:1px solid var(--primary);border-radius:100px;font-size:.78rem">
+          ${h.title.length > 18 ? h.title.slice(0, 18) + "…" : h.title}
+          <span onclick="toggleCampFilterSlug('${slug}')" style="cursor:pointer;opacity:.7;font-size:.8rem;line-height:1">✕</span>
+        </span>` : "";
       }).join("")}
     </div>
 
     <div id="camp-filter-panel" style="display:${_campDropdownOpen ? "block" : "none"};position:absolute;top:calc(100% + .5rem);left:0;z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:1rem;min-width:290px;box-shadow:0 8px 32px rgba(0,0,0,.5)">
       <div style="font-size:.75rem;font-weight:700;color:var(--muted);margin-bottom:.75rem;text-transform:uppercase;letter-spacing:.5px">해커톤 선택</div>
       ${HACKATHONS.map((h) => {
-        const cnt = teams.filter((t) => t.hackathonSlug === h.slug).length;
+        const cnt     = teams.filter((t) => t.hackathonSlug === h.slug).length;
         const checked = _campFilters.includes(h.slug);
         return `<label style="display:flex;align-items:center;gap:.7rem;padding:.55rem 0;cursor:pointer;border-bottom:1px solid var(--border)">
           <input type="checkbox" ${checked ? "checked" : ""} onchange="toggleCampFilterSlug('${h.slug}')" style="width:16px;height:16px;cursor:pointer;accent-color:var(--primary);flex-shrink:0">
@@ -72,7 +65,7 @@ function toggleCampDropdown(e) {
   if (panel) panel.style.display = _campDropdownOpen ? "block" : "none";
 }
 
-function closeCampDropdown(e) {
+function closeCampDropdown(_e) {
   if (_campDropdownOpen) {
     _campDropdownOpen = false;
     const panel = document.getElementById("camp-filter-panel");
@@ -86,11 +79,8 @@ function toggleCampFilterSlug(slug) {
   } else {
     _campFilters.push(slug);
   }
-  const newHash =
-    _campFilters.length > 0
-      ? "#/camp?hackathon=" + _campFilters.join(",")
-      : "#/camp";
-  history.replaceState(null, "", newHash);
+  const newSearch = _campFilters.length > 0 ? "?hackathon=" + _campFilters.join(",") : "";
+  history.replaceState(null, "", window.location.pathname + newSearch);
   _campDropdownOpen = true;
   const app = document.getElementById("app");
   if (app) app.innerHTML = renderCampHTML();
@@ -154,21 +144,17 @@ function closeModalDirect() {
 function createTeam(e) {
   e.preventDefault();
   const fd = new FormData(e.target);
-  const lf = fd
-    .get("lookingFor")
-    .split(",")
-    .map((s) => s.trim())
-    .filter(Boolean);
+  const lf = fd.get("lookingFor").split(",").map((s) => s.trim()).filter(Boolean);
   const team = {
-    teamCode: "T-" + Date.now(),
+    teamCode:      "T-" + Date.now(),
     hackathonSlug: fd.get("hackathonSlug"),
-    name: fd.get("name"),
-    isOpen: true,
-    memberCount: parseInt(fd.get("memberCount")) || 1,
-    lookingFor: lf,
-    intro: fd.get("intro"),
-    contact: { url: fd.get("contactUrl") },
-    createdAt: new Date().toISOString(),
+    name:          fd.get("name"),
+    isOpen:        true,
+    memberCount:   parseInt(fd.get("memberCount")) || 1,
+    lookingFor:    lf,
+    intro:         fd.get("intro"),
+    contact:       { url: fd.get("contactUrl") },
+    createdAt:     new Date().toISOString(),
   };
   const teams = getTeams();
   teams.unshift(team);
@@ -176,4 +162,11 @@ function createTeam(e) {
   closeModalDirect();
   toast("✅ 팀이 생성되었습니다!");
   go("/camp?hackathon=" + team.hackathonSlug);
+}
+
+// ── INIT ────────────────────────────────────────────────────
+if (document.getElementById("app")?.dataset.page === "camp") {
+  const q = new URLSearchParams(window.location.search);
+  document.getElementById("app").innerHTML = renderCamp(q.get("hackathon"));
+  updateNav("/camp");
 }

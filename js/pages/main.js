@@ -1,73 +1,8 @@
-// ── 상태 ────────────────────────────────────────────────────
-let _tab = "overview";
-let _hf = "all";
-let _campFilters = [];
-let _campDropdownOpen = false;
-
-// ── ROUTER ──────────────────────────────────────────────────
-function parseHash() {
-  const h = window.location.hash;
-  if (!h || h === "#") return { path: "/", q: new URLSearchParams() };
-  const full = h.slice(1);
-  const qi = full.indexOf("?");
-  if (qi === -1) return { path: full, q: new URLSearchParams() };
-  return {
-    path: full.slice(0, qi),
-    q: new URLSearchParams(full.slice(qi + 1)),
-  };
-}
-
-function go(pathQ, replace = false) {
-  const url = "#" + pathQ;
-  replace
-    ? history.replaceState(null, "", url)
-    : history.pushState(null, "", url);
-  render();
-  updateNav();
-  scrollTo(0, 0);
-}
-
-function updateNav() {
-  const { path } = parseHash();
-  document.querySelectorAll(".nl").forEach((el) => {
-    const r = el.dataset.r;
-    el.classList.toggle(
-      "active",
-      path === r || (r !== "/" && path.startsWith(r)),
-    );
-  });
-}
-
-window.addEventListener("popstate", () => {
-  render();
-  updateNav();
-});
-
-// ── RENDER DISPATCH ─────────────────────────────────────────
-function render() {
-  const { path, q } = parseHash();
-  const app = document.getElementById("app");
-  if (path === "/") app.innerHTML = renderHome();
-  else if (path === "/hackathons")
-    app.innerHTML = renderList(q.get("status") || "all");
-  else if (path.startsWith("/hackathons/")) {
-    const slug = path.split("/hackathons/")[1];
-    app.innerHTML = renderDetail(slug, q.get("tab"));
-  } else if (path === "/rankings") app.innerHTML = renderRankings();
-  else if (path === "/camp")
-    app.innerHTML = renderCamp(q.get("hackathon"));
-  else
-    app.innerHTML = `<div class="wrap page"><div class="empty"><div class="ico">🔍</div><p>페이지를 찾을 수 없습니다.</p></div></div>`;
-}
-
 // ── PAGE: HOME ───────────────────────────────────────────────
 function renderHome() {
   const active = HACKATHONS.filter((h) => h.status !== "ended");
-  const teams = getTeams();
-  const lbCount = Object.values(LEADERBOARDS).reduce(
-    (a, b) => a + b.entries.length,
-    0,
-  );
+  const teams  = getTeams();
+  const lbCount = Object.values(LEADERBOARDS).reduce((a, b) => a + b.entries.length, 0);
   return `
 <section class="hero">
   <div class="wrap">
@@ -88,13 +23,12 @@ function renderHome() {
     <div><div class="stat-n">${teams.length}</div><div class="stat-l">참가 팀</div></div>
     <div><div class="stat-n">${lbCount}</div><div class="stat-l">제출 기록</div></div>
   </div>
-  ${
-    active.length
-      ? `
-  <div class="sh"><div class="sh-t">🔥 진행 중 / 예정 해커톤</div><button class="sh-l" onclick="go('/hackathons')">전체 보기 →</button></div>
-  <div class="grid">${active.map(hCard).join("")}</div>`
-      : ""
-  }
+  ${active.length ? `
+  <div class="sh">
+    <div class="sh-t">🔥 진행 중 / 예정 해커톤</div>
+    <button class="sh-l" onclick="go('/hackathons')">전체 보기 →</button>
+  </div>
+  <div class="grid">${active.map(hCard).join("")}</div>` : ""}
   <hr class="div">
   <div class="grid" style="margin-bottom:2.5rem">
     <div class="box" style="cursor:pointer" onclick="go('/rankings')"><h3>🏆 글로벌 랭킹</h3><p>모든 해커톤 참가자의 순위를 확인하세요.</p></div>
@@ -105,5 +39,7 @@ function renderHome() {
 }
 
 // ── INIT ────────────────────────────────────────────────────
-render();
-updateNav();
+if (document.getElementById("app")?.dataset.page === "home") {
+  document.getElementById("app").innerHTML = renderHome();
+  updateNav("/");
+}

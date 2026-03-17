@@ -1,0 +1,32 @@
+<!doctype html>
+<html lang="ko">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>해커톤 상세 — DAKER</title>
+    <link rel="stylesheet" href="../css/global.css" />
+    <link rel="stylesheet" href="../css/layout.css" />
+    <link rel="stylesheet" href="../css/components.css" />
+    <link rel="stylesheet" href="../css/pages/hackathon-detail.css" />
+  </head>
+  <body>
+    <header class="nav">
+      <div class="logo" onclick="go('/')">⚡ DAKER</div>
+      <nav class="nav-links">
+        <button class="nl" data-r="/" onclick="go('/')">홈</button>
+        <button class="nl" data-r="/hackathons" onclick="go('/hackathons')">해커톤</button>
+        <button class="nl" data-r="/rankings" onclick="go('/rankings')">랭킹</button>
+        <button class="nl" data-r="/camp" onclick="go('/camp')">팀원모집</button>
+      </nav>
+    </header>
+
+    <main id="app" data-page="hackathon-detail"></main>
+
+    <script src="../js/core/db.js"></script>
+    <script src="../js/core/utils.js"></script>
+    <script src="../js/core/auth.js"></script>
+    <script src="../js/core/router.js"></script>
+    <script src="../js/components/ui.js"></script>
+    <script src="../js/pages/hackathon-detail.js"></script>
+  </body>
+</html>
