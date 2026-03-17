@@ -1,0 +1,80 @@
+/* TEAM CARD */
+.tcard {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 1.2rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.65rem;
+  transition: 0.2s;
+}
+.tcard:hover {
+  border-color: var(--primary);
+}
+.tc-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+.tname {
+  font-weight: 700;
+  font-size: 0.97rem;
+}
+.opbadge {
+  padding: 0.17rem 0.5rem;
+  border-radius: 100px;
+  font-size: 0.68rem;
+  font-weight: 700;
+}
+.op-y {
+  background: rgba(34, 197, 94, 0.15);
+  color: var(--green);
+  border: 1px solid rgba(34, 197, 94, 0.3);
+}
+.op-n {
+  background: var(--surface2);
+  color: var(--gray);
+  border: 1px solid var(--border);
+}
+.tintro {
+  font-size: 0.83rem;
+  color: var(--muted);
+  line-height: 1.6;
+}
+.lfor {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+.ltag {
+  padding: 0.12rem 0.5rem;
+  background: rgba(124, 58, 237, 0.12);
+  color: var(--pl);
+  border: 1px solid rgba(124, 58, 237, 0.25);
+  border-radius: 4px;
+  font-size: 0.7rem;
+}
+.hchip {
+  font-size: 0.7rem;
+  padding: 0.12rem 0.5rem;
+  background: var(--surface2);
+  color: var(--muted);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  cursor: pointer;
+}
+.cbtn {
+  padding: 0.45rem 0.9rem;
+  background: var(--primary);
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  transition: 0.15s;
+}
+.cbtn:hover {
+  background: #6d28d9;
+}
