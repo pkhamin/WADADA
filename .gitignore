@@ -1,0 +1,10 @@
+# 예시 자료
+예시자료/
+
+# 이미지
+*.png
+*.jpg
+*.jpeg
+
+# Claude 설정
+.claude/
